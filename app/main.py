@@ -16,10 +16,9 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 connection_db = psycopg2.connect("user='aires4' password='aires4' host='{}' dbname='postgres'".format(host))
-db = connection_db.cursor()
-
 
 def save_img(file_name, name):
+    db = connection_db.cursor()
     face_detector = dlib.get_frontal_face_detector()
     image = cv2.imread(file_name)
     detected_faces = face_detector(image, 1)
@@ -80,6 +79,7 @@ def find_face(file_name):
 
 
 def get_db_size():
+    db = connection_db.cursor()
     query = "SELECT count(*)"
     db.execute(query)
     return db.fetchone()[0]
@@ -132,6 +132,7 @@ def init():
 @app.route('/reset', methods=['GET'])
 @cross_origin()
 def reset():
+    db = connection_db.cursor()
     query = "TRUNCATE vectors"
     db.execute(query)
     init()
