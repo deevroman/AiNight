@@ -10,6 +10,7 @@ import os
 import random
 
 host = os.environ.get('STORAGE_HOST', None)
+print(host)
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
