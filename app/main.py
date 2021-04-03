@@ -117,7 +117,7 @@ def post_save_face():
         return str(e), 200
     if get_db_size() > 2000:
         reset()
-        return "ok. database reset. Reson: size > 2000", 200
+        return "ok. database reset. Reason: size > 2000", 200
     return name + "сохранён в базу", 200
 
 
@@ -142,13 +142,13 @@ def reset():
 @cross_origin()
 def test(pic_id):
     if pic_id == 1:
-        return find_face("app/photos/navalny.jpg")
+        return find_face("app/test/navalny.jpg")
     elif pic_id == 2:
-        return find_face("app/photos/putin.jpg")
+        return find_face("app/test/putin.jpg")
     elif pic_id == 3:
-        return find_face("app/photos/solovei.jpg")
+        return find_face("app/test/solovei.jpg")
     elif pic_id == 4:
-        return find_face("app/photos/zelen.jpg")
+        return find_face("app/test/zelen.jpg")
     return "", 200
 
 
