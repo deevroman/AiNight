@@ -10,15 +10,14 @@ import os
 import random
 
 host = os.environ.get('STORAGE_HOST', None)
-print(host)
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 connection_db = psycopg2.connect("user='aires4' password='aires4' host='{}' dbname='postgres'".format(host))
 
+
 def save_img(file_name, name):
-    db = connection_db.cursor()
     face_detector = dlib.get_frontal_face_detector()
     image = cv2.imread(file_name)
     detected_faces = face_detector(image, 1)
@@ -28,7 +27,9 @@ def save_img(file_name, name):
                                                                                  face_rect.right(), face_rect.bottom()))
         crop = image[face_rect.top():face_rect.bottom(), face_rect.left():face_rect.right()]
         encodings = face_recognition.face_encodings(crop)
+        print(encodings)
         if len(encodings) > 0:
+            db = connection_db.cursor()
             query = "SELECT count(*) FROM vectors WHERE file='{}'".format(name)
             db.execute(query)
             if db.fetchone()[0] > 0:
@@ -58,6 +59,7 @@ def find_face(file_name):
 
         encodings = face_recognition.face_encodings(crop)
         if len(encodings) > 0:
+            db = connection_db.cursor()
             query = "SELECT file FROM vectors ORDER BY " + \
                     "(CUBE(array[{}]) <-> vec_low) + (CUBE(array[{}]) <-> vec_high) ASC LIMIT 1 ;".format(
                         ','.join(str(s) for s in encodings[0][0:63]),
@@ -118,14 +120,17 @@ def post_save_face():
     if get_db_size() > 2000:
         reset()
         return "ok. database reset. Reason: size > 2000", 200
-    return name + "сохранён в базу", 200
+    return name + " сохранён в базу", 200
 
 
 def init():
-    save_img("app/photos/navalny.jpg", "navalny")
-    save_img("app/photos/putin.jpg", "putin")
-    save_img("app/photos/solovei.jpg", "solovei")
-    save_img("app/photos/zelen.jpg", "zelen")
+    try:
+        save_img("app/photos/navalny.jpg", "navalny")
+        save_img("app/photos/putin.jpg", "putin")
+        save_img("app/photos/solovei.jpg", "solovei")
+        save_img("app/photos/zelen.jpg", "zelen")
+    except Exception as e:
+        return str(e), 200
     return "Сброшено", 200
 
 
@@ -135,6 +140,7 @@ def reset():
     db = connection_db.cursor()
     query = "TRUNCATE vectors"
     db.execute(query)
+    connection_db.commit()
     init()
     return "Сброшено", 200
 
