@@ -11,7 +11,7 @@ import random
 import imghdr
 
 host = os.environ.get('STORAGE_HOST', None)
-app = Flask(__name__, static_folder='app/static')
+app = Flask(__name__, static_folder='static')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
