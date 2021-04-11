@@ -18,6 +18,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 connection_db = psycopg2.connect(DATABASE_URL)
 connection_db.autocommit = True
 
+
 class FaceNotFound(Exception):
     pass
 
@@ -168,7 +169,6 @@ def reset():
         try:
             query = "TRUNCATE vectors"
             db.execute(query)
-            connection_db.commit()
             init()
         finally:
             db.close()
@@ -222,7 +222,7 @@ def welcome():
     db.execute('create table vectors (id serial, file varchar, vec_low cube, vec_high cube);')
     db.execute('create index vectors_vec_idx on vectors (vec_low, vec_high);')
     db.close()
-    redirect("/")
+    return redirect("/", 302)
 
 
 @app.route('/')
