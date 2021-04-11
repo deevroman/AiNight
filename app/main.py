@@ -15,7 +15,7 @@ app = Flask(__name__, static_folder='static')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-connection_db = psycopg2.connect("DATABASE_URL")
+connection_db = psycopg2.connect(DATABASE_URL)
 
 
 class FaceNotFound(Exception):
