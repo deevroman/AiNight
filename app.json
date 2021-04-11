@@ -8,12 +8,6 @@
   "website": "aires4.herokuapp.com",
   "repository": "https://github.com/deevromam/AiNight",
   "success_url": "/welcome",
-  "env": {
-    "DATABASE_URL": {
-      "description": "URL до postgres",
-      "generator": "secret"
-    }
-  },
   "image": "heroku/python",
   "addons": [
     {
