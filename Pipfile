@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 Flask = "*"
 Flask-cors = "*"
+psycopg2-binary = "*"
 opencv-contrib-python = "*"
 gunicorn = "*"
 numpy = "*"
