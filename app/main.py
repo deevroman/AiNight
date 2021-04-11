@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask import request
 from flask_cors import CORS, cross_origin
 import psycopg2
@@ -10,12 +10,12 @@ import os
 import random
 import imghdr
 
-host = os.environ.get('STORAGE_HOST', None)
+DATABASE_URL = os.environ.get('DATABASE_URL', None)
 app = Flask(__name__, static_folder='static')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-connection_db = psycopg2.connect("user='aires4' password='aires4' host='{}' dbname='postgres'".format(host))
+connection_db = psycopg2.connect("DATABASE_URL")
 
 
 class FaceNotFound(Exception):
@@ -122,7 +122,7 @@ def route_get_db_size():
 @app.route('/find_face', methods=['POST'])
 @cross_origin()
 def get_find_face():
-    path = "app/tmp/" + str(random.randint(1, 100000))
+    path = "app/tmp/" + str(random.randint(1, 1000000))
     request.files['image'].save(path)
     try:
         return find_face(path), 200
@@ -212,6 +212,17 @@ def test(pic_id):
     except Exception as e:
         return str(e), 200
     return "", 200
+
+
+@app.route('/welcome')
+def welcome():
+    db = connection_db.cursor()
+    db.execute('create extension if not exists cube;')
+    db.execute('drop table if exists vectors;')
+    db.execute('create table vectors (id serial, file varchar, vec_low cube, vec_high cube);')
+    db.execute('create index vectors_vec_idx on vectors (vec_low, vec_high);')
+    db.close()
+    redirect("/")
 
 
 @app.route('/')
