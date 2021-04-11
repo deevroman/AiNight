@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+    <link href="/static/styles/style.css" rel="stylesheet">
+    <title>AiNight</title>
+</head>
+<script type="text/javascript" src="/static/js/jquery.js"></script>
+<script type="text/javascript">
+    // prefix = 'http://localhost:5000'
+    prefix = 'https://aires4.herokuapp.com'
+    function startLoad() {
+        $("button").attr('disabled', true);
+        $("#output").html("");
+        $('.loader').toggleClass('hide');
+    }
+
+    function doneLoad(data) {
+        if (typeof data === 'object') {
+            $("#output").html("Неудачный запрос. Попробуйте ещё раз или сбросьте бд");
+        } else {
+            $("#output").html(data);
+        }
+        $("button").attr('disabled', false);
+        $('.loader').toggleClass('hide');
+    }
+
+    $(function () {
+        $("#upload_button").on("click", function (e) {
+            var fd = new FormData();
+            if ($("#name_upload_file").val() == "") {
+                alert("Укажите имя");
+                return;
+            }
+            fd.append('name', $("#name_upload_file").val());
+            fileInput = $('#div_upload_file > input[type=file]')[0].files;
+            if (fileInput.length === 0) {
+                alert("Укажите файл");
+                return;
+            }
+            fd.append('image', fileInput[0]);
+            startLoad();
+            $.ajax({
+                url: prefix + '/add_face',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#find_button").on("click", function (e) {
+            var fd = new FormData();
+            fileInput = $('#div_find_face > input[type=file]')[0].files;
+            if (fileInput.length === 0) {
+                alert("Укажите файл");
+                return;
+            }
+            fd.append('image', fileInput[0]);
+            startLoad();
+            $.ajax({
+                url: prefix + '/find_face',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#find_1").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/test/1',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#find_2").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/test/2',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#find_3").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/test/3',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#find_4").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/test/4',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#reset").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/reset',
+            }).always((data) => doneLoad(data));
+        })
+    });
+    $(function () {
+        $("#print_db").on("click", function (e) {
+            startLoad();
+            $.ajax({
+                url: prefix + '/print_db',
+            }).always((data) => doneLoad(data));
+        })
+    });
+</script>
+<body>
+<table id="head">
+    <tr>
+        <th>
+            <div id="print">
+                <button id="print_db">Вывести базу</button>
+            </div>
+        </th>
+        <th>
+            <div id="exit">
+                <button id="reset">Сбросить бд</button>
+            </div>
+        </th>
+    </tr>
+</table>
+
+<div class="menu">
+    <p>По умолчанию в базе следующие лица:</p>
+    <details>
+        <summary>Показать</summary>
+        <img src="photos/navalny.jpg" height='100' alt="navalny">
+        <img src="photos/solovei.jpg" height='100' alt="putin">
+        <img src="photos/putin.jpg" height='100' alt="solovei">
+        <img src="photos/zelen.jpg" height='100' alt="zelen">
+    </details>
+
+    <p>
+        <details>
+            <summary>Найти каждого по другой фотографии:</summary>
+            <table>
+                <tr>
+                    <th><img src="test/navalny.jpg" height='100' alt="navalny">
+                    <th><img src="test/solovei.jpg" height='100' alt="solovei">
+                    <th><img src="test/putin.jpg" height='100' alt="putin">
+                    <th><img src="test/zelen.jpg" height='100' alt="zelen">
+                </tr>
+                <tr>
+                    <th>
+                        <button id="find_1">Найти</button>
+                    </th>
+                    <th>
+                        <button id="find_2">Найти</button>
+                    </th>
+                    <th>
+                        <button id="find_3">Найти</button>
+                    </th>
+                    <th>
+                        <button id="find_4">Найти</button>
+                    </th>
+                </tr>
+            </table>
+
+        </details>
+    </p>
+    Добавить новое лицо в базу:
+    <p></p>
+    <div id="div_upload_file">
+        <input type="text" id="name_upload_file" name="name" placeholder="Имя">
+        <p></p>
+        <input type="file" name="image" accept="image/*">
+        <button type="submit" id="upload_button"> Добавить</button>
+    </div>
+
+    <p></p>
+    Найти человека по фото:
+    <div id="div_find_face">
+        <p></p>
+        <input type="file" name="image" accept="image/*">
+        <button type="submit" id="find_button">Найти</button>
+        </form>
+    </div>
+    <div class="loader hide"></div>
+    <div id="output">
+
+    </div>
+    <p></p>
+
+</div>
+</body>
+</html>
