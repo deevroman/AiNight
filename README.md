@@ -21,7 +21,7 @@
   
   Убедитесь, что порт 80 не занят apache/nginx/и т.п.
   
-  ```
+  ```bash
   pip install -r requirements.txt
   python wsgi_local.py  
   ```
@@ -70,20 +70,20 @@
 Запишите туда:
 
 ```
-  server {
-      listen 0.0.0.0:8080;
-      location / {
-          client_max_body_size 5000M;
-          client_body_buffer_size 50000k;
-          include uwsgi_params;
-          uwsgi_pass unix:/home/USER/AiNight/AiNight.sock;
-      }
-  }
+server {
+    listen 0.0.0.0:8080;
+    location / {
+        client_max_body_size 5000M;
+        client_body_buffer_size 50000k;
+        include uwsgi_params;
+        uwsgi_pass unix:/home/USER/AiNight/AiNight.sock;
+    }
+}
 ```
 
 ```bash
-  ln -s /etc/nginx/sites-available/AiNight /etc/nginx/sites-enabled
-  systemctl restart nginx```
+ln -s /etc/nginx/sites-available/AiNight /etc/nginx/sites-enabled
+systemctl restart nginx```
 ```
 
 ### Troubleshooting:
