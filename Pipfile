@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 Flask = "*"
+Flask-cors = "*"
 opencv-contrib-python = "*"
 gunicorn = "*"
 numpy = "*"
