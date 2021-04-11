@@ -46,19 +46,21 @@ def save_img(file_name, name):
         # print(encodings)
         if len(encodings) > 0:
             db = connection_db.cursor()
-            query = "SELECT count(*) FROM vectors WHERE file='{}'".format(name)
-            db.execute(query)
-            if db.fetchone()[0] > 0:
-                raise Exception("Такой name уже есть")
-            query = "INSERT INTO vectors (file, vec_low, vec_high) VALUES ('{}', CUBE(array[{}]), CUBE(array[{}]));".format(
-                name,
-                ','.join(str(s) for s in encodings[0][0:63]),
-                ','.join(str(s) for s in encodings[0][64:127]),
-            )
-            db.execute(query)
-            # print(query)
-            connection_db.commit()
-            db.close()
+            try:
+                query = "SELECT count(*) FROM vectors WHERE file='{}'".format(name)
+                db.execute(query)
+                if db.fetchone()[0] > 0:
+                    raise Exception("Такой name уже есть")
+                query = "INSERT INTO vectors (file, vec_low, vec_high) VALUES ('{}', CUBE(array[{}]), CUBE(array[{}]));".format(
+                    name,
+                    ','.join(str(s) for s in encodings[0][0:63]),
+                    ','.join(str(s) for s in encodings[0][64:127]),
+                )
+                db.execute(query)
+                # print(query)
+                connection_db.commit()
+            finally:
+                db.close()
         else:
             raise FaceNotFound("На фото нет лица")
 
@@ -163,10 +165,13 @@ def init():
 def reset():
     try:
         db = connection_db.cursor()
-        query = "TRUNCATE vectors"
-        db.execute(query)
-        connection_db.commit()
-        init()
+        try:
+            query = "TRUNCATE vectors"
+            db.execute(query)
+            connection_db.commit()
+            init()
+        finally:
+            db.close()
     except Exception as e:
         print(e)
         return "Не удалось", 200
@@ -177,14 +182,16 @@ def reset():
 @cross_origin()
 def print_db():
     db = connection_db.cursor()
-    query = "SELECT file from vectors"
-    db.execute(query)
-    ans = ""
-    row = db.fetchone()
-    while row is not None:
-        ans += row[0] + "</br>"
+    try:
+        query = "SELECT file from vectors"
+        db.execute(query)
+        ans = ""
         row = db.fetchone()
-    db.close()
+        while row is not None:
+            ans += row[0] + "</br>"
+            row = db.fetchone()
+    finally:
+        db.close()
     return ans, 200
 
 
