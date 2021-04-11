@@ -11,6 +11,10 @@ opencv-contrib-python = "*"
 gunicorn = "*"
 numpy = "*"
 Jinja2 = ">=2.10.1"
+cmake = "*"
+dlib = "*"
+face-recognition = "*"
+
 
 [dev-packages]
 
