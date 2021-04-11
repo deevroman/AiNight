@@ -11,10 +11,78 @@
 
 ### Варианты запуска:
 
-+ В jupyter notebook:
-+ Heroku
-+ Локально
-+ На сервере
+#### Jupyter notebook:
+  Откройте `NotebookDemo.ipynb`. Если будете использовать Google Colab смените среду выполнения на GPU.  
+
+#### Heroku
+  
+  Нажмите на кнопку "Deploy to Heroku". Если приложение пишет, что не удалось сбросить базу, поробуйте ещё раз или обратитесь по адресу `/welcome`
+#### Локально
+  
+  Убедитесь, что порт 80 не занят apache/nginx/и т.п.
+  
+  ```
+  pip install -r requirements.txt
+  python wsgi_local.py  
+  ```
+  
+#### На сервере
+  
+  Можно на также как и локально, но это ненадёжно.
+  
+  Примерный процесс установки:
+
+  ```bash
+  pip install virtualenv
+  cd AiNight
+  virtualenv env
+  source env/bin/activate
+  pip install -r requirements.txt
+  sudo apt-get install nginx
+  sudo vim /etc/systemd/system/AiNight.service
+  ```
+  Далее везде вместо `USER` пользователь под которым вы хотите запускать сервис
+  
+
+  Запишите туда:
+  ```
+  [Unit]
+  Description=wsgi for AiNight
+  After=network.target
+  [Service]
+  User=USER
+  Group=www-data
+  WorkingDirectory=/home/USER/AiNight
+  Environment="PATH=/home/USER/AiNight/env/bin"
+  ExecStart=/home/USER/AiNight/env/bin/uwsgi --ini uWSGI.ini
+  [Install]
+  WantedBy=multi-user.target
+  ```
+  ```
+  systemctl start AiNight
+  systemctl enable AiNight
+  ```
+  
+  `sudo vim /etc/nginx/sites-available/AiNight`
+  
+Запишите туда:
+
+```
+  server {
+      listen 0.0.0.0:8080;
+      location / {
+          client_max_body_size 5000M;
+          client_body_buffer_size 50000k;
+          include uwsgi_params;
+          uwsgi_pass unix:/home/USER/AiNight/AiNight.sock;
+      }
+  }
+```
+
+```
+  ln -s /etc/nginx/sites-available/AiNight /etc/nginx/sites-enabled
+  systemctl restart nginx```
+```
 
 ### Troubleshooting:
 
