@@ -9,15 +9,15 @@
 
 С помощью `OpenCV` выделяем лица на фото. После с помощью библиотеки `face_recognition` получаем вектор из 128 чисел, кодирующий лицо. Postgresql поддерживает данный тип данных и умеет эффективно работать с ним, а именно быстро искать максимально схожий вектор, т.е. лицо. Получив такой вектор от искомого лица и сделав сделав запрос на получение максимально схожего вектора получаем искомого человека. Собственно всё
 
-### Варианты запуска:
+## Варианты запуска:
 
-#### Jupyter notebook:
+### Jupyter notebook:
   Откройте `NotebookDemo.ipynb`. Если будете использовать Google Colab смените среду выполнения на GPU.  
 
-#### Heroku
+### Heroku
   
   Нажмите на кнопку "Deploy to Heroku". Если приложение пишет, что не удалось сбросить базу, поробуйте ещё раз или обратитесь по адресу `/welcome`
-#### Локально
+### Локально
   
   Убедитесь, что порт 80 не занят apache/nginx/и т.п.
   
@@ -26,7 +26,7 @@
   python wsgi_local.py  
   ```
   
-#### На сервере
+### На сервере
   
   Можно на также как и локально, но это ненадёжно.
   
@@ -58,12 +58,14 @@
   [Install]
   WantedBy=multi-user.target
   ```
-  ```
+  ```bash
   systemctl start AiNight
   systemctl enable AiNight
   ```
   
-  `sudo vim /etc/nginx/sites-available/AiNight`
+  ```bash
+  sudo vim /etc/nginx/sites-available/AiNight
+  ```
   
 Запишите туда:
 
@@ -79,7 +81,7 @@
   }
 ```
 
-```
+```bash
   ln -s /etc/nginx/sites-available/AiNight /etc/nginx/sites-enabled
   systemctl restart nginx```
 ```
